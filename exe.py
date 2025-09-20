@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import os
 
 from pygame import mixer
 
@@ -8,17 +9,22 @@ pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
 
-background = pygame.image.load('background.png')
+# Resolve asset paths relative to this script's directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+def asset_path(name: str):
+    return os.path.join(BASE_DIR, name)
 
-mixer.music.load('background.wav')
+background = pygame.image.load(asset_path('background.png'))
+
+mixer.music.load(asset_path('background.wav'))
 mixer.music.play(-1)
 
 pygame.display.set_caption("Space Invaders")
-icon = pygame.image.load('spaceship.png')
+icon = pygame.image.load(asset_path('spaceship.png'))
 pygame.display.set_icon(icon)
 
 # Player
-playerimg = pygame.image.load('player.png')
+playerimg = pygame.image.load(asset_path('player.png'))
 playerX = 370
 playerY = 480
 playerX_change = 0
@@ -32,14 +38,14 @@ enemyY_change = []
 num_of_enemy = 6
 
 for i in range(num_of_enemy):
-    enemyimg.append(pygame.image.load('enemy.png'))
+    enemyimg.append(pygame.image.load(asset_path('enemy.png')))
     enemyX.append(random.randint(0, 735))
     enemyY.append(random.randint(50, 150))
     enemyX_change.append(0.5)
     enemyY_change.append(40)
 
 # Bullets (infinite)
-bulletimg = pygame.image.load('bullet.png')
+bulletimg = pygame.image.load(asset_path('bullet.png'))
 bullets = []  # Each bullet is a dict: {'x': ..., 'y': ...}
 bulletY_change = 1
 
@@ -90,7 +96,7 @@ while running:
             if event.key == pygame.K_RIGHT:
                 playerX_change = 0.5
             if event.key == pygame.K_SPACE:
-                bullet_sound = mixer.Sound('laser.wav')
+                bullet_sound = mixer.Sound(asset_path('laser.wav'))
                 bullet_sound.play()
                 # Add a new bullet at the player's position
                 bullets.append({'x': playerX, 'y': playerY})
@@ -125,7 +131,7 @@ while running:
         # Check collision with all bullets
         for bullet in bullets:
             if isCollision(enemyX[i], enemyY[i], bullet['x'], bullet['y']):
-                explosion_sound = mixer.Sound('explosion.wav')
+                explosion_sound = mixer.Sound(asset_path('explosion.wav'))
                 explosion_sound.play()
                 score_value += 1
                 enemyX[i] = random.randint(0, 735)
